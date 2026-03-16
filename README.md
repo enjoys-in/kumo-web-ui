@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Kumo UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web dashboard for [KumoMTA](https://kumomta.com/) — manage queues, trace SMTP sessions, view metrics, and control your mail server from a clean SaaS-style interface.
 
-Currently, two official plugins are available:
+Built with **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4**, **shadcn/ui**, and **Recharts**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+| Page | Description |
+|------|-------------|
+| **Dashboard** | Live stat cards and charts (delivered, failed, queued, connections) |
+| **Metrics** | Detailed metrics with area/pie/bar charts, tabbed views |
+| **Bounces** | View and manage bounce rules |
+| **Suspensions** | Suspend deliveries by domain / campaign / tenant |
+| **Ready Q Suspend** | Suspend specific ready queues |
+| **Rebind** | Rebind messages to different queues |
+| **Inject** | Inject test messages via the HTTP API |
+| **Queue Inspect** | Inspect ready queue states with live refresh |
+| **Queue Summary** | Ready queues, scheduled queues, and provider summary (D/T/F/C/Q) |
+| **Message Inspect** | Look up individual messages by ID |
+| **Trace SMTP Client** | Real-time WebSocket trace of outgoing SMTP sessions with 8 filters |
+| **Trace SMTP Server** | Real-time WebSocket trace of incoming SMTP connections |
+| **Log Filter** | Configure logging levels at runtime |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- [Bun](https://bun.sh/) (package manager & runtime)
+- A running KumoMTA instance with the HTTP API enabled (default `localhost:8000`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+bun install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start dev server (proxies /api and /metrics to KumoMTA)
+bun run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Production build
+bun run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The dev server runs on `http://localhost:5173` by default and proxies all `/api` and `/metrics` requests (including WebSocket upgrades) to `http://localhost:8000`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/       # Layout, sidebar, shadcn/ui components
+├── lib/
+│   ├── api.ts        # KumoMTA API client (REST + WebSocket)
+│   └── utils.ts      # Utility helpers
+├── pages/            # Route pages (one per feature)
+├── App.tsx           # React Router config
+└── main.tsx          # Entry point
+```
+
+## Configuration
+
+The API base URL defaults to the Vite dev proxy. To point at a different KumoMTA instance, set the `KUMOMTA_API` environment variable or update the proxy target in `vite.config.ts`.
+
+## License
+
+MIT

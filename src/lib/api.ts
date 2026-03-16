@@ -279,3 +279,94 @@ export const getMetricsPrometheus = () => request<string>("/metrics");
 // === Task Dump ===
 export const getTaskDump = () =>
   request<unknown[]>("/api/admin/task-dump");
+
+// === Trace SMTP Client (Streaming) ===
+export interface TraceSmtpClientFilter {
+  source?: string;
+  mx_addr?: string;
+  mx_host?: string;
+  domain?: string;
+  routing_domain?: string;
+  campaign?: string;
+  tenant?: string;
+  ready_queue?: string;
+}
+
+export function traceSmtpClient(
+  filters: TraceSmtpClientFilter,
+  onLine: (line: string) => void,
+  signal?: AbortSignal
+): WebSocket {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(filters)) {
+    if (v) params.set(k, v);
+  }
+  const qs = params.toString();
+  const proto = location.protocol === "https:" ? "wss:" : "ws:";
+  const url = `${proto}//${location.host}/api/admin/trace-smtp-client/v1${qs ? `?${qs}` : ""}`;
+  const ws = new WebSocket(url);
+  ws.onmessage = (ev) => {
+    const data = typeof ev.data === "string" ? ev.data : "";
+    for (const line of data.split("\n")) {
+      if (line.trim()) onLine(line);
+    }
+  };
+  signal?.addEventListener("abort", () => ws.close());
+  return ws;
+}
+
+// === Trace SMTP Server (Streaming) ===
+export interface TraceSmtpServerFilter {
+  source?: string;
+}
+
+export function traceSmtpServer(
+  filters: TraceSmtpServerFilter,
+  onLine: (line: string) => void,
+  signal?: AbortSignal
+): WebSocket {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(filters)) {
+    if (v) params.set(k, v);
+  }
+  const qs = params.toString();
+  const proto = location.protocol === "https:" ? "wss:" : "ws:";
+  const url = `${proto}//${location.host}/api/admin/trace-smtp-server/v1${qs ? `?${qs}` : ""}`;
+  const ws = new WebSocket(url);
+  ws.onmessage = (ev) => {
+    const data = typeof ev.data === "string" ? ev.data : "";
+    for (const line of data.split("\n")) {
+      if (line.trim()) onLine(line);
+    }
+  };
+  signal?.addEventListener("abort", () => ws.close());
+  return ws;
+}
+
+// === Transfer Messages (xfer) ===
+export interface XferRequest {
+  domain?: string;
+  campaign?: string;
+  tenant?: string;
+  routing_domain?: string;
+  target_node: string;
+  queue_names?: string[];
+}
+export interface XferResponse {
+  id: string;
+  total_transferred: number;
+}
+export const xferMessages = (data: XferRequest) =>
+  request<XferResponse>("/api/admin/xfer/v1", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+export interface XferCancelRequest {
+  id: string;
+}
+export const cancelXfer = (data: XferCancelRequest) =>
+  request<unknown>("/api/admin/xfer/cancel/v1", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });

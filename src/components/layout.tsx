@@ -14,6 +14,9 @@ import {
   Sun,
   Menu,
   Zap,
+  Layers,
+  ArrowUpRight,
+  ArrowDownLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -40,12 +43,15 @@ const navGroups = [
     items: [
       { to: "/inject", icon: Send, label: "Inject" },
       { to: "/queues", icon: Search, label: "Queue Inspect" },
+      { to: "/queue-summary", icon: Layers, label: "Queue Summary" },
       { to: "/messages", icon: Mail, label: "Message Inspect" },
     ],
   },
   {
-    label: "System",
+    label: "Diagnostics",
     items: [
+      { to: "/trace-smtp-client", icon: ArrowUpRight, label: "Trace Client" },
+      { to: "/trace-smtp-server", icon: ArrowDownLeft, label: "Trace Server" },
       { to: "/log-filter", icon: FileText, label: "Log Filter" },
     ],
   },
