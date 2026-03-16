@@ -17,6 +17,7 @@ import {
   Layers,
   ArrowUpRight,
   ArrowDownLeft,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -26,6 +27,7 @@ const navGroups = [
     label: "Overview",
     items: [
       { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/top", icon: Gauge, label: "Live Top" },
       { to: "/metrics", icon: BarChart3, label: "Metrics" },
     ],
   },
@@ -74,21 +76,21 @@ export function Layout() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-border/50">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#FFA724] to-[#FF8C00] text-white shadow-md shadow-[#FFA724]/20">
           <Zap className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-base font-semibold tracking-tight">KumoMTA</h1>
-          <p className="text-[11px] text-muted-foreground font-medium">Admin Console</p>
+          <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-[#FFA724] to-[#FF8C00] bg-clip-text text-transparent">KumoMTA</h1>
+          <p className="text-[10px] text-muted-foreground font-medium tracking-wide uppercase">Admin Console</p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-auto px-3 py-2 space-y-5">
+      <nav className="flex-1 overflow-auto px-3 py-4 space-y-5">
         {navGroups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+            <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/60">
               {group.label}
             </p>
             <div className="space-y-0.5">
@@ -98,10 +100,10 @@ export function Layout() {
                   to={item.to}
                   end={item.to === "/"}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                    `flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
                       isActive
-                        ? "bg-primary/10 text-primary shadow-sm"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        ? "bg-gradient-to-r from-[#FFA724]/15 to-[#FFA724]/5 text-[#FFA724] shadow-sm border border-[#FFA724]/20"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     }`
                   }
                 >
@@ -115,13 +117,17 @@ export function Layout() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t">
+      <div className="px-4 py-3 border-t border-border/50">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] text-muted-foreground font-medium">v1.0.0</span>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDark(!dark)}>
-            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+            <span className="text-[11px] text-muted-foreground font-medium">v1.0.0</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent" onClick={() => setDark(!dark)}>
+            {dark ? <Sun className="h-4 w-4 text-[#FFA724]" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
+        <p className="text-[10px] text-muted-foreground/50 text-center mt-2">Made by <span className="font-semibold text-[#FFA724]/70">Enjoys</span></p>
       </div>
     </>
   );
@@ -129,15 +135,15 @@ export function Layout() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-60 flex-col border-r bg-card/50 shrink-0">
+      <aside className="hidden lg:flex w-[250px] flex-col border-r bg-card/80 backdrop-blur-sm shrink-0">
         <SidebarContent />
       </aside>
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="fixed inset-y-0 left-0 w-60 flex flex-col bg-card border-r shadow-xl z-50 animate-fade-in">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <aside className="fixed inset-y-0 left-0 w-[250px] flex flex-col bg-card border-r shadow-2xl z-50 animate-fade-in">
             <SidebarContent />
           </aside>
         </div>
@@ -146,14 +152,16 @@ export function Layout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="flex items-center gap-3 h-14 px-4 lg:px-6 border-b bg-card/50 shrink-0">
+        <header className="flex items-center gap-3 h-14 px-4 lg:px-6 border-b bg-card/60 backdrop-blur-sm shrink-0">
           <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex-1" />
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-            <span className="text-xs text-muted-foreground font-medium">Connected</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/20">
+              <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+              <span className="text-[11px] text-success font-semibold">Connected</span>
+            </div>
           </div>
         </header>
 

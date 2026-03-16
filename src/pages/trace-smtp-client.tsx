@@ -54,14 +54,14 @@ export function TraceSmtpClientPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Trace SMTP Client</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Trace SMTP Client</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Trace outgoing SMTP sessions in real time
           </p>
         </div>
         <div className="flex items-center gap-2">
           {running && (
-            <Badge variant="outline" className="gap-1.5 text-xs">
+            <Badge variant="outline" className="gap-1.5 text-xs bg-success/10 border-success/20 text-success">
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
               Streaming
             </Badge>
@@ -170,7 +170,7 @@ export function TraceSmtpClientPage() {
           </div>
           <div className="flex gap-2 mt-4">
             {!running ? (
-              <Button size="sm" className="gap-1.5" onClick={start}>
+              <Button size="sm" className="gap-1.5 bg-[#FFA724] hover:bg-[#FF8C00] text-white shadow-md shadow-[#FFA724]/20" onClick={start}>
                 <Play className="h-3.5 w-3.5" />
                 Start Tracing
               </Button>

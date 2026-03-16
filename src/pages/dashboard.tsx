@@ -26,10 +26,11 @@ import {
   ArrowDownRight,
   Cpu,
   HardDrive,
-  Zap,
   TrendingUp,
   Trash2,
   FileText,
+  Send,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -115,11 +116,12 @@ function formatBytes(bytes: number): string {
 }
 
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
+  "#FFA724",
+  "#22C55E",
+  "#3B82F6",
+  "#EF4444",
+  "#8B5CF6",
+  "#14B8A6",
 ];
 
 export function Dashboard() {
@@ -136,6 +138,7 @@ export function Dashboard() {
   const flat = rawMetrics ? flattenMetrics(rawMetrics) : {};
   const totalDelivered = extractCounter(flat, "delivered", "total_messages_delivered");
   const totalBounced = extractCounter(flat, "bounced", "total_messages_fail");
+  const totalReceived = extractCounter(flat, "received", "total_messages_received");
 
   const handleBumpConfig = async () => {
     try {
@@ -164,15 +167,13 @@ export function Dashboard() {
     }
   };
 
-  // Build memory data for pie chart
   const memData = memoryStats.data
     ? Object.entries(memoryStats.data)
         .filter(([, v]) => typeof v === "number" && (v as number) > 0)
-        .slice(0, 5)
+        .slice(0, 6)
         .map(([name, value]) => ({ name: name.replace(/_/g, " "), value: Number(value) }))
     : [];
 
-  // Chart data with labels
   const chartData = history.map((h, i) => ({
     label: `${i * 5}s`,
     delivered: h.delivered ?? 0,
@@ -180,9 +181,8 @@ export function Dashboard() {
     queued: h.queued ?? 0,
   }));
 
-  // Queue breakdown for bar chart
   const queueData = readyQList.slice(0, 8).map((q) => ({
-    name: q.name.length > 20 ? q.name.slice(0, 20) + "..." : q.name,
+    name: q.name.length > 25 ? q.name.slice(0, 25) + "..." : q.name,
     context: q.context,
   }));
 
@@ -191,92 +191,120 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Real-time overview of your mail transfer agent
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge
             variant={isAlive ? "default" : "destructive"}
-            className="gap-1.5"
+            className={`gap-1.5 ${isAlive ? "bg-success/10 text-success border-success/20 hover:bg-success/15" : ""}`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${isAlive ? "bg-green-400 animate-pulse" : "bg-red-400"}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${isAlive ? "bg-success animate-pulse" : "bg-destructive"}`} />
             {isAlive ? "Online" : "Offline"}
           </Badge>
-          <Button variant="outline" size="sm" onClick={handleBumpConfig} className="gap-1.5">
-            <RefreshCw className="h-3.5 w-3.5" />
-            Reload Config
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleBounceAll} className="gap-1.5">
-            <Trash2 className="h-3.5 w-3.5" />
-            Flush All
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleSetLogFilter} className="gap-1.5">
-            <FileText className="h-3.5 w-3.5" />
-            Set Log Filter
-          </Button>
+          {machineInfo.data && (
+            <Badge variant="outline" className="gap-1.5 text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {new Date(machineInfo.data.online_since).toLocaleTimeString()}
+            </Badge>
+          )}
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={handleBumpConfig} size="sm" className="gap-1.5 bg-[#FFA724] hover:bg-[#FF8C00] text-white shadow-md shadow-[#FFA724]/20">
+          <RefreshCw className="h-3.5 w-3.5" />
+          Reload Config
+        </Button>
+        <Button onClick={handleBounceAll} size="sm" variant="outline" className="gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10">
+          <Trash2 className="h-3.5 w-3.5" />
+          Flush All Queues
+        </Button>
+        <Button onClick={handleSetLogFilter} size="sm" variant="outline" className="gap-1.5">
+          <FileText className="h-3.5 w-3.5" />
+          Set Log Filter
+        </Button>
+      </div>
+
+      {/* Stat Cards - Colorful with gradient accent */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
-          title="Messages Delivered"
+          title="Delivered"
           value={formatNum(totalDelivered)}
-          icon={<Zap className="h-4 w-4" />}
+          icon={<Send className="h-4 w-4" />}
           trend={history.length > 1 ? (history[history.length - 1]?.delivered ?? 0) : undefined}
           trendLabel="/5s"
-          color="text-chart-1"
+          gradient="from-[#FFA724]/10 to-[#FFA724]/5"
+          iconBg="bg-[#FFA724]/15 text-[#FFA724]"
+          borderColor="border-[#FFA724]/20"
         />
         <StatCard
-          title="Total Bounced"
+          title="Received"
+          value={formatNum(totalReceived)}
+          icon={<ArrowDownRight className="h-4 w-4" />}
+          gradient="from-blue-500/10 to-blue-500/5"
+          iconBg="bg-blue-500/15 text-blue-500"
+          borderColor="border-blue-500/20"
+        />
+        <StatCard
+          title="Bounced"
           value={formatNum(totalBounced)}
           icon={<Ban className="h-4 w-4" />}
           trend={bounces.data?.length}
-          trendLabel="rules active"
-          color="text-destructive"
+          trendLabel="rules"
+          gradient="from-red-500/10 to-red-500/5"
+          iconBg="bg-red-500/15 text-red-500"
+          borderColor="border-red-500/20"
         />
         <StatCard
           title="Suspensions"
           value={String(suspensions.data?.length ?? "—")}
           icon={<Pause className="h-4 w-4" />}
-          color="text-chart-3"
+          gradient="from-purple-500/10 to-purple-500/5"
+          iconBg="bg-purple-500/15 text-purple-500"
+          borderColor="border-purple-500/20"
         />
         <StatCard
           title="Ready Queues"
           value={String(readyQList.length || "—")}
           icon={<Layers className="h-4 w-4" />}
-          color="text-chart-2"
+          gradient="from-emerald-500/10 to-emerald-500/5"
+          iconBg="bg-emerald-500/15 text-emerald-500"
+          borderColor="border-emerald-500/20"
         />
       </div>
 
       {/* Charts Row */}
       <div className="grid gap-4 lg:grid-cols-7">
-        {/* Throughput Chart */}
-        <Card className="lg:col-span-4">
+        <Card className="lg:col-span-4 overflow-hidden">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium">Throughput</CardTitle>
+                <CardTitle className="text-sm font-semibold">Throughput</CardTitle>
                 <CardDescription>Messages per 5-second interval</CardDescription>
               </div>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-3 text-[11px]">
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#FFA724]" /> Delivered</span>
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-500" /> Bounced</span>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px]">
+            <div className="h-[260px]">
               {chartData.length > 1 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="gDelivered" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#FFA724" stopOpacity={0.35} />
+                        <stop offset="95%" stopColor="#FFA724" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="gBounced" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#EF4444" stopOpacity={0.25} />
+                        <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
@@ -285,63 +313,45 @@ export function Dashboard() {
                     <Tooltip
                       contentStyle={{
                         background: "hsl(var(--card))",
+                        color: "hsl(var(--foreground))",
                         border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
+                        borderRadius: "10px",
                         fontSize: "12px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                       }}
                     />
-                    <Area
-                      type="monotone"
-                      dataKey="delivered"
-                      stroke="hsl(var(--chart-1))"
-                      strokeWidth={2}
-                      fill="url(#gDelivered)"
-                      name="Delivered"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="bounced"
-                      stroke="hsl(var(--destructive))"
-                      strokeWidth={2}
-                      fill="url(#gBounced)"
-                      name="Bounced"
-                    />
+                    <Area type="monotone" dataKey="delivered" stroke="#FFA724" strokeWidth={2.5} fill="url(#gDelivered)" name="Delivered" />
+                    <Area type="monotone" dataKey="bounced" stroke="#EF4444" strokeWidth={2} fill="url(#gBounced)" name="Bounced" />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                  Collecting data...
+                  <div className="text-center">
+                    <TrendingUp className="h-8 w-8 mx-auto mb-2 text-[#FFA724]/40" />
+                    <p>Collecting data...</p>
+                  </div>
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Memory Pie Chart */}
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-3 overflow-hidden">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium">Memory Allocation</CardTitle>
+                <CardTitle className="text-sm font-semibold">Memory Allocation</CardTitle>
                 <CardDescription>Current memory breakdown</CardDescription>
               </div>
               <HardDrive className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px]">
+            <div className="h-[200px]">
               {memData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={memData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={85}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
+                    <Pie data={memData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" strokeWidth={2} stroke="hsl(var(--card))">
                       {memData.map((_, idx) => (
                         <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                       ))}
@@ -350,9 +360,11 @@ export function Dashboard() {
                       formatter={(value: number) => formatBytes(value)}
                       contentStyle={{
                         background: "hsl(var(--card))",
+                        color: "hsl(var(--foreground))",
                         border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
+                        borderRadius: "10px",
                         fontSize: "12px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                       }}
                     />
                   </PieChart>
@@ -364,12 +376,12 @@ export function Dashboard() {
               )}
             </div>
             {memData.length > 0 && (
-              <div className="grid grid-cols-2 gap-2 mt-2">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-1">
                 {memData.map((d, i) => (
                   <div key={d.name} className="flex items-center gap-2 text-xs">
-                    <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
+                    <div className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
                     <span className="text-muted-foreground truncate">{d.name}</span>
-                    <span className="ml-auto font-medium tabular-nums">{formatBytes(d.value)}</span>
+                    <span className="ml-auto font-semibold tabular-nums">{formatBytes(d.value)}</span>
                   </div>
                 ))}
               </div>
@@ -380,62 +392,62 @@ export function Dashboard() {
 
       {/* Bottom Row */}
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* Queue States Bar Chart */}
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium">Ready Queue States</CardTitle>
+                <CardTitle className="text-sm font-semibold">Ready Queue States</CardTitle>
                 <CardDescription>{readyQList.length} queues active</CardDescription>
               </div>
-              <Layers className="h-4 w-4 text-muted-foreground" />
+              <Badge variant="outline" className="text-[10px] bg-[#FFA724]/10 text-[#FFA724] border-[#FFA724]/20">LIVE</Badge>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[200px] overflow-auto">
+            <div className="h-[220px] overflow-auto">
               {queueData.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {queueData.map((q, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                      <span className="text-sm font-mono truncate max-w-[50%]">{q.name}</span>
-                      <Badge variant="outline" className="text-xs shrink-0">{q.context}</Badge>
+                    <div key={i} className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 transition-colors">
+                      <span className="text-sm font-mono truncate max-w-[55%]">{q.name}</span>
+                      <Badge variant="outline" className="text-[10px] shrink-0">{q.context}</Badge>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                  No queue data
+                  <div className="text-center">
+                    <Layers className="h-8 w-8 mx-auto mb-2 text-muted-foreground/30" />
+                    <p>No queue data</p>
+                  </div>
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Server Info */}
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium">Server Info</CardTitle>
+                <CardTitle className="text-sm font-semibold">Server Info</CardTitle>
                 <CardDescription>Machine details</CardDescription>
               </div>
               <Server className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <InfoRow icon={<Activity className="h-4 w-4" />} label="Status" value={isAlive ? "Healthy" : "Unreachable"} valueClass={isAlive ? "text-success" : "text-destructive"} />
-              <InfoRow icon={<Server className="h-4 w-4" />} label="Hostname" value={machineInfo.data?.hostname ?? "—"} />
-              <InfoRow icon={<Cpu className="h-4 w-4" />} label="Version" value={machineInfo.data?.version ?? "—"} />
-              <InfoRow icon={<Cpu className="h-4 w-4" />} label="Platform" value={machineInfo.data?.platform ?? "—"} />
-              <InfoRow icon={<Cpu className="h-4 w-4" />} label="CPU" value={machineInfo.data?.cpu_brand ?? "—"} />
-              <InfoRow icon={<Cpu className="h-4 w-4" />} label="Cores" value={String(machineInfo.data?.num_cores ?? "—")} />
-              <InfoRow icon={<HardDrive className="h-4 w-4" />} label="Memory" value={machineInfo.data ? formatBytes(machineInfo.data.total_memory_bytes) : "—"} />
-              <InfoRow icon={<Server className="h-4 w-4" />} label="OS" value={machineInfo.data?.os_version ?? "—"} />
-              <InfoRow icon={<Activity className="h-4 w-4" />} label="Online Since" value={machineInfo.data?.online_since ? new Date(machineInfo.data.online_since).toLocaleString() : "—"} />
-              <InfoRow icon={<Layers className="h-4 w-4" />} label="Ready Queues" value={String(readyQList.length || "—")} />
-              <InfoRow icon={<Ban className="h-4 w-4" />} label="Active Bounces" value={String(bounces.data?.length ?? "—")} />
-              <InfoRow icon={<Pause className="h-4 w-4" />} label="Active Suspensions" value={String(suspensions.data?.length ?? "—")} />
+            <div className="space-y-0.5">
+              <InfoRow icon={<Activity className="h-3.5 w-3.5" />} label="Status" value={isAlive ? "Healthy" : "Unreachable"} valueClass={isAlive ? "text-success font-semibold" : "text-destructive font-semibold"} />
+              <InfoRow icon={<Server className="h-3.5 w-3.5" />} label="Hostname" value={machineInfo.data?.hostname ?? "—"} />
+              <InfoRow icon={<Cpu className="h-3.5 w-3.5" />} label="Version" value={machineInfo.data?.version ?? "—"} highlight />
+              <InfoRow icon={<Cpu className="h-3.5 w-3.5" />} label="CPU" value={machineInfo.data?.cpu_brand ?? "—"} />
+              <InfoRow icon={<Cpu className="h-3.5 w-3.5" />} label="Cores" value={String(machineInfo.data?.num_cores ?? "—")} />
+              <InfoRow icon={<HardDrive className="h-3.5 w-3.5" />} label="Memory" value={machineInfo.data ? formatBytes(machineInfo.data.total_memory_bytes) : "—"} />
+              <InfoRow icon={<Server className="h-3.5 w-3.5" />} label="OS" value={machineInfo.data?.os_version ?? "—"} />
+              <InfoRow icon={<Clock className="h-3.5 w-3.5" />} label="Online Since" value={machineInfo.data?.online_since ? new Date(machineInfo.data.online_since).toLocaleString() : "—"} />
+              <InfoRow icon={<Layers className="h-3.5 w-3.5" />} label="Ready Queues" value={String(readyQList.length || "—")} />
+              <InfoRow icon={<Ban className="h-3.5 w-3.5" />} label="Active Bounces" value={String(bounces.data?.length ?? "—")} />
+              <InfoRow icon={<Pause className="h-3.5 w-3.5" />} label="Suspensions" value={String(suspensions.data?.length ?? "—")} />
             </div>
           </CardContent>
         </Card>
@@ -444,30 +456,32 @@ export function Dashboard() {
   );
 }
 
-function StatCard({ title, value, icon, trend, trendLabel, color }: {
+function StatCard({ title, value, icon, trend, trendLabel, gradient, iconBg, borderColor }: {
   title: string;
   value: string;
   icon: React.ReactNode;
   trend?: number;
   trendLabel?: string;
-  color?: string;
+  gradient: string;
+  iconBg: string;
+  borderColor: string;
 }) {
   return (
-    <Card className="group hover:shadow-md transition-shadow">
-      <CardContent className="p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[13px] text-muted-foreground font-medium">{title}</span>
-          <div className={`p-2 rounded-lg bg-muted/50 ${color}`}>{icon}</div>
+    <Card className={`group hover:shadow-lg transition-all duration-300 border ${borderColor} bg-gradient-to-br ${gradient} overflow-hidden`}>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[12px] text-muted-foreground font-semibold uppercase tracking-wide">{title}</span>
+          <div className={`p-1.5 rounded-lg ${iconBg}`}>{icon}</div>
         </div>
-        <div className="text-2xl font-semibold tracking-tight">{value}</div>
+        <div className="text-2xl font-bold tracking-tight">{value}</div>
         {trend !== undefined && (
-          <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
             {trend > 0 ? (
               <ArrowUpRight className="h-3 w-3 text-success" />
             ) : (
               <ArrowDownRight className="h-3 w-3 text-muted-foreground" />
             )}
-            <span>{trend} {trendLabel}</span>
+            <span className="font-medium">{trend} {trendLabel}</span>
           </div>
         )}
       </CardContent>
@@ -475,14 +489,14 @@ function StatCard({ title, value, icon, trend, trendLabel, color }: {
   );
 }
 
-function InfoRow({ icon, label, value, valueClass }: { icon: React.ReactNode; label: string; value: string; valueClass?: string }) {
+function InfoRow({ icon, label, value, valueClass, highlight }: { icon: React.ReactNode; label: string; value: string; valueClass?: string; highlight?: boolean }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-      <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+    <div className={`flex items-center justify-between py-1.5 px-2 rounded-md ${highlight ? "bg-[#FFA724]/5" : "hover:bg-muted/30"} transition-colors`}>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
         {icon}
-        <span className="capitalize">{label}</span>
+        <span>{label}</span>
       </div>
-      <span className={`text-sm font-medium tabular-nums ${valueClass ?? ""}`}>{value}</span>
+      <span className={`text-xs font-medium tabular-nums ${valueClass ?? ""}`}>{value}</span>
     </div>
   );
 }

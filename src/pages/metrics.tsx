@@ -46,13 +46,20 @@ function formatNum(n: number): string {
 }
 
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "hsl(var(--primary))",
-  "hsl(var(--destructive))",
+  "#FFA724",
+  "#22C55E",
+  "#3B82F6",
+  "#EF4444",
+  "#8B5CF6",
+  "#14B8A6",
+  "#F97316",
+];
+
+const STAT_STYLES = [
+  { gradient: "from-[#FFA724]/10 to-[#FFA724]/5", border: "border-[#FFA724]/20", iconBg: "bg-[#FFA724]/15", iconColor: "text-[#FFA724]" },
+  { gradient: "from-blue-500/10 to-blue-500/5", border: "border-blue-500/20", iconBg: "bg-blue-500/15", iconColor: "text-blue-500" },
+  { gradient: "from-emerald-500/10 to-emerald-500/5", border: "border-emerald-500/20", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-500" },
+  { gradient: "from-purple-500/10 to-purple-500/5", border: "border-purple-500/20", iconBg: "bg-purple-500/15", iconColor: "text-purple-500" },
 ];
 
 function categorizeMetrics(flat: Record<string, number>) {
@@ -145,17 +152,17 @@ export function MetricsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Metrics</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Metrics</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Real-time server performance metrics
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="gap-1.5 text-xs">
+          <Badge variant="outline" className="gap-1.5 text-xs bg-success/10 border-success/20 text-success">
             <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
             Auto-refresh 5s
           </Badge>
-          <Button variant="outline" size="sm" onClick={() => jsonMetrics.refetch()} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={() => jsonMetrics.refetch()} className="gap-1.5 hover:bg-[#FFA724]/10 hover:text-[#FFA724] hover:border-[#FFA724]/30">
             <RefreshCw className="h-3.5 w-3.5" />
             Refresh
           </Button>
@@ -174,20 +181,23 @@ export function MetricsPage() {
         <TabsContent value="overview" className="space-y-4 mt-4">
           {/* Stat tiles */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {topCounters.slice(0, 4).map(([key, val], i) => (
-              <Card key={key} className="group hover:shadow-md transition-shadow">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[13px] text-muted-foreground font-medium truncate capitalize">{shortKey(key).replace(/_/g, " ")}</span>
-                    <div className="p-2 rounded-lg bg-muted/50" style={{ color: COLORS[i % COLORS.length] }}>
-                      <Activity className="h-4 w-4" />
+            {topCounters.slice(0, 4).map(([key, val], i) => {
+              const s = STAT_STYLES[i % STAT_STYLES.length];
+              return (
+                <Card key={key} className={`group hover:shadow-lg transition-all duration-200 bg-gradient-to-br ${s.gradient} border ${s.border}`}>
+                  <CardContent className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[13px] text-muted-foreground font-semibold truncate capitalize">{shortKey(key).replace(/_/g, " ")}</span>
+                      <div className={`p-2 rounded-lg ${s.iconBg} ${s.iconColor}`}>
+                        <Activity className="h-4 w-4" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-2xl font-semibold tracking-tight tabular-nums">{formatNum(val)}</div>
-                  <p className="text-[11px] text-muted-foreground mt-1 truncate">{key}</p>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="text-2xl font-bold tracking-tight tabular-nums">{formatNum(val)}</div>
+                    <p className="text-[11px] text-muted-foreground mt-1 truncate">{key}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Throughput Line Chart */}
@@ -195,7 +205,7 @@ export function MetricsPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-sm font-medium">Throughput Over Time</CardTitle>
+                  <CardTitle className="text-sm font-semibold">Throughput Over Time</CardTitle>
                   <CardDescription>Delta per 5-second interval</CardDescription>
                 </div>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -220,6 +230,7 @@ export function MetricsPage() {
                       <Tooltip
                         contentStyle={{
                           background: "hsl(var(--card))",
+                          color: "hsl(var(--foreground))",
                           border: "1px solid hsl(var(--border))",
                           borderRadius: "8px",
                           fontSize: "12px",
@@ -254,7 +265,7 @@ export function MetricsPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-sm font-medium">Counter Distribution</CardTitle>
+                    <CardTitle className="text-sm font-semibold">Counter Distribution</CardTitle>
                     <CardDescription>Top counters by value</CardDescription>
                   </div>
                   <Gauge className="h-4 w-4 text-muted-foreground" />
@@ -282,6 +293,7 @@ export function MetricsPage() {
                           formatter={(value: number) => formatNum(value)}
                           contentStyle={{
                             background: "hsl(var(--card))",
+                            color: "hsl(var(--foreground))",
                             border: "1px solid hsl(var(--border))",
                             borderRadius: "8px",
                             fontSize: "12px",
@@ -314,7 +326,7 @@ export function MetricsPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-sm font-medium">Gauge Values</CardTitle>
+                    <CardTitle className="text-sm font-semibold">Gauge Values</CardTitle>
                     <CardDescription>Current state metrics</CardDescription>
                   </div>
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -332,12 +344,13 @@ export function MetricsPage() {
                           formatter={(value: number) => formatNum(value)}
                           contentStyle={{
                             background: "hsl(var(--card))",
+                            color: "hsl(var(--foreground))",
                             border: "1px solid hsl(var(--border))",
                             borderRadius: "8px",
                             fontSize: "12px",
                           }}
                         />
-                        <Bar dataKey="value" fill="hsl(var(--chart-2))" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="value" fill="#22C55E" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
@@ -398,6 +411,7 @@ export function MetricsPage() {
                         formatter={(value: number) => formatNum(value)}
                         contentStyle={{
                           background: "hsl(var(--card))",
+                          color: "hsl(var(--foreground))",
                           border: "1px solid hsl(var(--border))",
                           borderRadius: "8px",
                           fontSize: "12px",

@@ -13,12 +13,14 @@ import { RebindPage } from "@/pages/rebind";
 import { TraceSmtpClientPage } from "@/pages/trace-smtp-client";
 import { TraceSmtpServerPage } from "@/pages/trace-smtp-server";
 import { QueueSummaryPage } from "@/pages/queue-summary";
+import { LiveTopPage } from "@/pages/live-top";
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/top" element={<LiveTopPage />} />
         <Route path="/bounce" element={<BouncePage />} />
         <Route path="/suspend" element={<SuspendPage />} />
         <Route path="/suspend-ready-q" element={<SuspendReadyQPage />} />
