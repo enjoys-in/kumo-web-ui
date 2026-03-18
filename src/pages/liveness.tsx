@@ -19,8 +19,8 @@ export function LivenessPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Server Liveness</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
+        <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Server Liveness</h1>
+        <p className="text-sm text-muted-foreground/70 mt-1">
           Check whether the KumoMTA server is live and ready to accept messages
         </p>
       </div>
@@ -45,11 +45,11 @@ export function LivenessPage() {
 
             {isLive && (
               <>
-                <div className="h-20 w-20 rounded-full bg-success/10 border-2 border-success flex items-center justify-center">
-                  <HeartPulse className="h-8 w-8 text-success" />
+                <div className="h-20 w-20 rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+                  <HeartPulse className="h-8 w-8 text-emerald-500" />
                 </div>
                 <div className="text-center">
-                  <Badge className="bg-success/10 text-success border-success/20 text-sm px-3 py-1">
+                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-sm px-3 py-1">
                     Server is Live
                   </Badge>
                   <p className="text-sm text-muted-foreground mt-2">

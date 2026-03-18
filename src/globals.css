@@ -3,72 +3,74 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: 40 20% 98%;
-  --foreground: 220 20% 10%;
+  --background: 225 20% 97%;
+  --foreground: 224 30% 12%;
   --card: 0 0% 100%;
-  --card-foreground: 220 20% 10%;
+  --card-foreground: 224 30% 12%;
   --popover: 0 0% 100%;
-  --popover-foreground: 220 20% 10%;
-  --primary: 38 100% 57%;
+  --popover-foreground: 224 30% 12%;
+  --primary: 33 100% 55%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 38 20% 95%;
-  --secondary-foreground: 38 30% 35%;
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 9% 46%;
-  --accent: 38 60% 95%;
-  --accent-foreground: 38 80% 40%;
+  --secondary: 225 20% 95%;
+  --secondary-foreground: 225 15% 40%;
+  --muted: 225 18% 95%;
+  --muted-foreground: 225 10% 48%;
+  --accent: 33 50% 95%;
+  --accent-foreground: 33 80% 38%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
   --success: 152 69% 41%;
   --success-foreground: 0 0% 100%;
   --warning: 38 100% 57%;
   --warning-foreground: 0 0% 100%;
-  --info: 210 100% 52%;
+  --info: 217 91% 60%;
   --info-foreground: 0 0% 100%;
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 38 100% 57%;
-  --radius: 0.625rem;
-  --chart-1: 38 100% 57%;
+  --border: 225 15% 91%;
+  --input: 225 15% 88%;
+  --ring: 33 100% 55%;
+  --radius: 0.75rem;
+  --chart-1: 33 100% 57%;
   --chart-2: 152 69% 41%;
-  --chart-3: 210 100% 52%;
+  --chart-3: 217 91% 60%;
   --chart-4: 346 77% 50%;
   --chart-5: 262 68% 56%;
   --chart-6: 173 58% 39%;
+  --sidebar-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .dark {
-  --background: 220 25% 6%;
-  --foreground: 38 15% 93%;
-  --card: 220 25% 8%;
-  --card-foreground: 38 15% 93%;
-  --popover: 220 25% 8%;
-  --popover-foreground: 38 15% 93%;
-  --primary: 38 100% 57%;
-  --primary-foreground: 220 25% 6%;
-  --secondary: 220 20% 13%;
-  --secondary-foreground: 38 20% 75%;
-  --muted: 220 20% 13%;
-  --muted-foreground: 220 12% 55%;
-  --accent: 38 40% 12%;
-  --accent-foreground: 38 100% 65%;
+  --background: 224 28% 6%;
+  --foreground: 220 20% 92%;
+  --card: 224 24% 10%;
+  --card-foreground: 220 20% 92%;
+  --popover: 224 24% 10%;
+  --popover-foreground: 220 20% 92%;
+  --primary: 33 100% 55%;
+  --primary-foreground: 224 28% 6%;
+  --secondary: 224 20% 14%;
+  --secondary-foreground: 220 15% 72%;
+  --muted: 224 20% 14%;
+  --muted-foreground: 224 12% 52%;
+  --accent: 33 35% 14%;
+  --accent-foreground: 33 100% 65%;
   --destructive: 0 63% 45%;
-  --destructive-foreground: 38 15% 93%;
+  --destructive-foreground: 220 20% 92%;
   --success: 152 69% 38%;
   --success-foreground: 0 0% 100%;
   --warning: 38 100% 50%;
-  --warning-foreground: 220 25% 6%;
-  --info: 210 100% 52%;
+  --warning-foreground: 224 28% 6%;
+  --info: 217 91% 60%;
   --info-foreground: 0 0% 100%;
-  --border: 220 20% 14%;
-  --input: 220 20% 14%;
-  --ring: 38 100% 57%;
-  --chart-1: 38 100% 60%;
+  --border: 224 18% 16%;
+  --input: 224 18% 16%;
+  --ring: 33 100% 55%;
+  --chart-1: 33 100% 60%;
   --chart-2: 152 69% 48%;
-  --chart-3: 210 100% 62%;
+  --chart-3: 217 91% 65%;
   --chart-4: 346 77% 60%;
   --chart-5: 262 68% 66%;
   --chart-6: 173 58% 49%;
+  --sidebar-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
 }
 
 @theme inline {
@@ -116,6 +118,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
   button, [role="button"] {
     cursor: pointer;
@@ -124,21 +127,21 @@
   /* Themed scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+    scrollbar-color: hsl(var(--primary) / 0.25) transparent;
   }
   *::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
   }
   *::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary) / 0.3);
+    background: hsl(var(--primary) / 0.2);
     border-radius: 9999px;
   }
   *::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.5);
+    background: hsl(var(--primary) / 0.4);
   }
 
   /* 60fps scroll performance */
@@ -150,29 +153,65 @@
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.25s ease-out;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .animate-slide-up {
-    animation: slideUp 0.35s ease-out;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .glass {
-    backdrop-filter: blur(16px);
-    background: hsl(var(--card) / 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: hsl(var(--card) / 0.7);
+  }
+  .glass-subtle {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    background: hsl(var(--card) / 0.55);
   }
   .glow-primary {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.15), 0 0 6px hsl(var(--primary) / 0.1);
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.12), 0 0 8px hsl(var(--primary) / 0.08);
+  }
+  .glow-sm {
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.08);
   }
   .gradient-card {
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--primary) / 0.03) 100%);
+    background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--primary) / 0.03) 100%);
+  }
+  .gradient-mesh {
+    background-image:
+      radial-gradient(at 20% 30%, hsl(var(--primary) / 0.06) 0px, transparent 50%),
+      radial-gradient(at 80% 70%, hsl(var(--info) / 0.04) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsl(var(--success) / 0.03) 0px, transparent 50%);
+  }
+  .shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 30%,
+      hsl(var(--primary) / 0.04) 50%,
+      transparent 70%
+    );
+    pointer-events: none;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
 }

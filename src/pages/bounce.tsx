@@ -58,8 +58,8 @@ export function BouncePage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Bounce Management</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Administratively bounce messages matching specific criteria</p>
+          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Bounce Management</h1>
+          <p className="text-sm text-muted-foreground/70 mt-1">Administratively bounce messages matching specific criteria</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)} className="gap-1.5">
           <Plus className="h-4 w-4" />
@@ -118,7 +118,7 @@ export function BouncePage() {
           {bounces.data && bounces.data.length > 0 && (
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
+                <thead className="text-xs text-muted-foreground/70 uppercase bg-accent/30">
                   <tr>
                     <th className="px-4 py-2">ID</th>
                     <th className="px-4 py-2">Campaign</th>
@@ -132,7 +132,7 @@ export function BouncePage() {
                 </thead>
                 <tbody>
                   {bounces.data.map((b) => (
-                    <tr key={b.id} className="border-t">
+                    <tr key={b.id} className="border-t border-border/40 hover:bg-accent/20 transition-colors">
                       <td className="px-4 py-2 font-mono text-xs">{b.id.slice(0, 8)}...</td>
                       <td className="px-4 py-2">{b.campaign || <Badge variant="secondary">Any</Badge>}</td>
                       <td className="px-4 py-2">{b.tenant || <Badge variant="secondary">Any</Badge>}</td>

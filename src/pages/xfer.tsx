@@ -107,8 +107,8 @@ export function XferPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Transfer Messages</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
+        <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Transfer Messages</h1>
+        <p className="text-sm text-muted-foreground/70 mt-1">
           Transfer messages from this node to another KumoMTA node, or cancel an ongoing transfer
         </p>
       </div>
@@ -256,7 +256,7 @@ export function XferPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted p-4 rounded-md overflow-auto text-sm font-mono">
+            <pre className="bg-accent/30 backdrop-blur-sm border border-border/40 p-4 rounded-lg overflow-auto text-sm font-mono">
               {JSON.stringify(xferResult, null, 2)}
             </pre>
           </CardContent>
@@ -313,7 +313,7 @@ export function XferPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted p-4 rounded-md overflow-auto text-sm font-mono">
+            <pre className="bg-accent/30 backdrop-blur-sm border border-border/40 p-4 rounded-lg overflow-auto text-sm font-mono">
               {JSON.stringify(cancelResult, null, 2)}
             </pre>
           </CardContent>

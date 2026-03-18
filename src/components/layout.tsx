@@ -20,6 +20,7 @@ import {
   Gauge,
   Repeat2,
   HeartPulse,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -96,24 +97,31 @@ export function Layout() {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-border/50">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#FFA724] to-[#FF8C00] text-white shadow-md shadow-[#FFA724]/20">
-          <Zap className="h-5 w-5" />
+      <div className="flex items-center justify-between px-5 py-5 border-b border-border/30">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#FFA724] to-[#FF6B00] text-white shadow-lg shadow-[#FFA724]/25">
+            <Zap className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <h1 className="text-[15px] font-bold tracking-tight bg-gradient-to-r from-[#FFA724] to-[#FF6B00] bg-clip-text text-transparent">KumoMTA</h1>
+            <p className="text-[9px] text-muted-foreground/70 font-semibold tracking-widest uppercase">Admin Console</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-[#FFA724] to-[#FF8C00] bg-clip-text text-transparent">KumoMTA</h1>
-          <p className="text-[10px] text-muted-foreground font-medium tracking-wide uppercase">Admin Console</p>
-        </div>
+        {onClose && (
+          <Button variant="ghost" size="icon" className="h-7 w-7 lg:hidden" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-auto px-3 py-4 space-y-5">
         {navGroups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/60">
+            <p className="px-3 mb-2.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
               {group.label}
             </p>
             <div className="space-y-0.5">
@@ -123,14 +131,14 @@ export function Layout() {
                   to={item.to}
                   end={item.to === "/"}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
+                    `group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 ${
                       isActive
-                        ? "bg-gradient-to-r from-[#FFA724]/15 to-[#FFA724]/5 text-[#FFA724] shadow-sm border border-[#FFA724]/20"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        ? "bg-gradient-to-r from-[#FFA724]/15 to-[#FFA724]/5 text-[#FFA724] shadow-sm ring-1 ring-[#FFA724]/15"
+                        : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
                     }`
                   }
                 >
-                  <item.icon className="h-4 w-4 shrink-0" />
+                  <item.icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
                   {item.label}
                 </NavLink>
               ))}
@@ -140,34 +148,34 @@ export function Layout() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-border/50">
+      <div className="px-4 py-3.5 border-t border-border/30">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`h-1.5 w-1.5 rounded-full ${isLive ? "bg-success" : isLive === false ? "bg-destructive" : "bg-muted-foreground"} animate-pulse`} />
-            <span className="text-[11px] text-muted-foreground font-medium">v1.0.0</span>
+            <div className={`h-2 w-2 rounded-full ${isLive ? "bg-emerald-400 shadow-sm shadow-emerald-400/50" : isLive === false ? "bg-red-400 shadow-sm shadow-red-400/50" : "bg-muted-foreground/50"} animate-pulse`} />
+            <span className="text-[11px] text-muted-foreground/70 font-medium">v1.0.0</span>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent" onClick={() => setDark(!dark)}>
-            {dark ? <Sun className="h-4 w-4 text-[#FFA724]" /> : <Moon className="h-4 w-4" />}
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-accent/60 transition-all" onClick={() => setDark(!dark)}>
+            {dark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
           </Button>
         </div>
-        <p className="text-[10px] text-muted-foreground/50 text-center mt-2">Made by <span className="font-semibold text-[#FFA724]/70">Enjoys</span></p>
+        <p className="text-[10px] text-muted-foreground/40 text-center mt-2">Made by <span className="font-semibold text-[#FFA724]/60">Enjoys</span></p>
       </div>
     </>
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background gradient-mesh">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-[250px] flex-col border-r bg-card/80 backdrop-blur-sm shrink-0">
+      <aside className="hidden lg:flex w-[260px] flex-col border-r border-border/40 glass shrink-0" style={{ boxShadow: 'var(--sidebar-shadow)' }}>
         <SidebarContent />
       </aside>
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="fixed inset-y-0 left-0 w-[250px] flex flex-col bg-card border-r shadow-2xl z-50 animate-fade-in">
-            <SidebarContent />
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
+          <aside className="fixed inset-y-0 left-0 w-[280px] flex flex-col glass border-r border-border/40 shadow-2xl z-50 animate-fade-in">
+            <SidebarContent onClose={() => setSidebarOpen(false)} />
           </aside>
         </div>
       )}
@@ -175,26 +183,37 @@ export function Layout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="flex items-center gap-3 h-14 px-4 lg:px-6 border-b bg-card/60 backdrop-blur-sm shrink-0">
-          <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8" onClick={() => setSidebarOpen(true)}>
+        <header className="flex items-center gap-3 h-14 px-4 lg:px-6 border-b border-border/40 glass-subtle shrink-0">
+          <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8 rounded-lg" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex-1" />
           <div className="flex items-center gap-3">
+            {/* Theme toggle in header */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden lg:flex h-8 w-8 rounded-lg hover:bg-accent/60"
+              onClick={() => setDark(!dark)}
+            >
+              {dark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
+            </Button>
+
+            {/* Liveness badge */}
             {isLive === null ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted border border-border">
-                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-pulse" />
-                <span className="text-[11px] text-muted-foreground font-semibold">Checking...</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full glass border border-border/50">
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50 animate-pulse" />
+                <span className="text-[11px] text-muted-foreground font-medium">Checking...</span>
               </div>
             ) : isLive ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                <span className="text-[11px] text-success font-semibold">Online</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-sm shadow-emerald-500/5">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse" />
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Online</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/10 border border-destructive/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
-                <span className="text-[11px] text-destructive font-semibold">Offline</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 shadow-sm shadow-red-500/5">
+                <div className="h-1.5 w-1.5 rounded-full bg-red-400 shadow-sm shadow-red-400/50 animate-pulse" />
+                <span className="text-[11px] text-red-600 dark:text-red-400 font-semibold">Offline</span>
               </div>
             )}
           </div>

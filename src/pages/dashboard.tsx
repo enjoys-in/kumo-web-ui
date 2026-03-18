@@ -191,21 +191,21 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Dashboard</h1>
+          <p className="text-sm text-muted-foreground/70 mt-1">
             Real-time overview of your mail transfer agent
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Badge
             variant={isAlive ? "default" : "destructive"}
-            className={`gap-1.5 ${isAlive ? "bg-success/10 text-success border-success/20 hover:bg-success/15" : ""}`}
+            className={`gap-1.5 ${isAlive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/15" : ""}`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${isAlive ? "bg-success animate-pulse" : "bg-destructive"}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${isAlive ? "bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50" : "bg-destructive"}`} />
             {isAlive ? "Online" : "Offline"}
           </Badge>
           {machineInfo.data && (
-            <Badge variant="outline" className="gap-1.5 text-muted-foreground">
+            <Badge variant="outline" className="gap-1.5 text-muted-foreground/70">
               <Clock className="h-3 w-3" />
               {new Date(machineInfo.data.online_since).toLocaleTimeString()}
             </Badge>
@@ -215,15 +215,15 @@ export function Dashboard() {
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-2">
-        <Button onClick={handleBumpConfig} size="sm" className="gap-1.5 bg-[#FFA724] hover:bg-[#FF8C00] text-white shadow-md shadow-[#FFA724]/20">
+        <Button onClick={handleBumpConfig} size="sm" className="gap-1.5 bg-gradient-to-r from-[#FFA724] to-[#FF8C00] hover:from-[#FF9B10] hover:to-[#FF7500] text-white shadow-md shadow-[#FFA724]/25 hover:shadow-lg hover:shadow-[#FFA724]/30">
           <RefreshCw className="h-3.5 w-3.5" />
           Reload Config
         </Button>
-        <Button onClick={handleBounceAll} size="sm" variant="outline" className="gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10">
+        <Button onClick={handleBounceAll} size="sm" variant="outline" className="gap-1.5 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/40">
           <Trash2 className="h-3.5 w-3.5" />
           Flush All Queues
         </Button>
-        <Button onClick={handleSetLogFilter} size="sm" variant="outline" className="gap-1.5">
+        <Button onClick={handleSetLogFilter} size="sm" variant="outline" className="gap-1.5 hover:border-border">
           <FileText className="h-3.5 w-3.5" />
           Set Log Filter
         </Button>
@@ -399,7 +399,7 @@ export function Dashboard() {
                 <CardTitle className="text-sm font-semibold">Ready Queue States</CardTitle>
                 <CardDescription>{readyQList.length} queues active</CardDescription>
               </div>
-              <Badge variant="outline" className="text-[10px] bg-[#FFA724]/10 text-[#FFA724] border-[#FFA724]/20">LIVE</Badge>
+              <Badge variant="outline" className="text-[10px] bg-[#FFA724]/10 text-[#FFA724] border-[#FFA724]/20 shadow-sm shadow-[#FFA724]/5">LIVE</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -407,7 +407,7 @@ export function Dashboard() {
               {queueData.length > 0 ? (
                 <div className="space-y-1">
                   {queueData.map((q, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div key={i} className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-accent/40 transition-all duration-200">
                       <span className="text-sm font-mono truncate max-w-[55%]">{q.name}</span>
                       <Badge variant="outline" className="text-[10px] shrink-0">{q.context}</Badge>
                     </div>
@@ -467,19 +467,19 @@ function StatCard({ title, value, icon, trend, trendLabel, gradient, iconBg, bor
   borderColor: string;
 }) {
   return (
-    <Card className={`group hover:shadow-lg transition-all duration-300 border ${borderColor} bg-gradient-to-br ${gradient} overflow-hidden`}>
+    <Card className={`group hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20 transition-all duration-300 border ${borderColor} bg-gradient-to-br ${gradient} overflow-hidden backdrop-blur-sm`}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[12px] text-muted-foreground font-semibold uppercase tracking-wide">{title}</span>
-          <div className={`p-1.5 rounded-lg ${iconBg}`}>{icon}</div>
+          <span className="text-[11px] text-muted-foreground/70 font-semibold uppercase tracking-widest">{title}</span>
+          <div className={`p-1.5 rounded-xl ${iconBg} transition-transform duration-300 group-hover:scale-110`}>{icon}</div>
         </div>
         <div className="text-2xl font-bold tracking-tight">{value}</div>
         {trend !== undefined && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground/60">
             {trend > 0 ? (
-              <ArrowUpRight className="h-3 w-3 text-success" />
+              <ArrowUpRight className="h-3 w-3 text-emerald-500" />
             ) : (
-              <ArrowDownRight className="h-3 w-3 text-muted-foreground" />
+              <ArrowDownRight className="h-3 w-3 text-muted-foreground/50" />
             )}
             <span className="font-medium">{trend} {trendLabel}</span>
           </div>
@@ -491,8 +491,8 @@ function StatCard({ title, value, icon, trend, trendLabel, gradient, iconBg, bor
 
 function InfoRow({ icon, label, value, valueClass, highlight }: { icon: React.ReactNode; label: string; value: string; valueClass?: string; highlight?: boolean }) {
   return (
-    <div className={`flex items-center justify-between py-1.5 px-2 rounded-md ${highlight ? "bg-[#FFA724]/5" : "hover:bg-muted/30"} transition-colors`}>
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+    <div className={`flex items-center justify-between py-1.5 px-2.5 rounded-lg ${highlight ? "bg-[#FFA724]/5 ring-1 ring-[#FFA724]/10" : "hover:bg-accent/40"} transition-all duration-200`}>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
         {icon}
         <span>{label}</span>
       </div>

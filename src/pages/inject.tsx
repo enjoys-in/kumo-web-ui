@@ -44,8 +44,8 @@ export function InjectPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Inject Message</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Inject a message via the HTTP injection API</p>
+        <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Inject Message</h1>
+        <p className="text-sm text-muted-foreground/70 mt-1">Inject a message via the HTTP injection API</p>
       </div>
 
       <Card>

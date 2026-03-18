@@ -152,7 +152,7 @@ export function MetricsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Metrics</h1>
+          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Metrics</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Real-time server performance metrics
           </p>

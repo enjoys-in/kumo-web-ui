@@ -185,7 +185,7 @@ export function LiveTopPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Live Top</h1>
+          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Live Top</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Real-time system overview — like <code className="text-xs bg-[#FFA724]/10 text-[#FFA724] px-1.5 py-0.5 rounded font-semibold">kcli top</code>
           </p>
