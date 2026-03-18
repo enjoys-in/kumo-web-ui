@@ -18,9 +18,12 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   Gauge,
+  Repeat2,
+  HeartPulse,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { checkLiveness } from "@/lib/api";
 
 const navGroups = [
   {
@@ -38,6 +41,7 @@ const navGroups = [
       { to: "/suspend", icon: Pause, label: "Suspensions" },
       { to: "/suspend-ready-q", icon: PauseCircle, label: "Ready Q Suspend" },
       { to: "/rebind", icon: ArrowRightLeft, label: "Rebind" },
+      { to: "/xfer", icon: Repeat2, label: "Transfer (Xfer)" },
     ],
   },
   {
@@ -55,6 +59,7 @@ const navGroups = [
       { to: "/trace-smtp-client", icon: ArrowUpRight, label: "Trace Client" },
       { to: "/trace-smtp-server", icon: ArrowDownLeft, label: "Trace Server" },
       { to: "/log-filter", icon: FileText, label: "Log Filter" },
+      { to: "/liveness", icon: HeartPulse, label: "Liveness" },
     ],
   },
 ];
@@ -62,7 +67,25 @@ const navGroups = [
 export function Layout() {
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLive, setIsLive] = useState<boolean | null>(null);
+  const liveRef = useRef(isLive);
+  liveRef.current = isLive;
   const location = useLocation();
+
+  const pollLiveness = useCallback(async () => {
+    try {
+      await checkLiveness();
+      if (!liveRef.current) setIsLive(true);
+    } catch {
+      if (liveRef.current !== false) setIsLive(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    pollLiveness();
+    const id = setInterval(pollLiveness, 10_000);
+    return () => clearInterval(id);
+  }, [pollLiveness]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -120,7 +143,7 @@ export function Layout() {
       <div className="px-4 py-3 border-t border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+            <div className={`h-1.5 w-1.5 rounded-full ${isLive ? "bg-success" : isLive === false ? "bg-destructive" : "bg-muted-foreground"} animate-pulse`} />
             <span className="text-[11px] text-muted-foreground font-medium">v1.0.0</span>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent" onClick={() => setDark(!dark)}>
@@ -158,10 +181,22 @@ export function Layout() {
           </Button>
           <div className="flex-1" />
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/20">
-              <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              <span className="text-[11px] text-success font-semibold">Connected</span>
-            </div>
+            {isLive === null ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted border border-border">
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-pulse" />
+                <span className="text-[11px] text-muted-foreground font-semibold">Checking...</span>
+              </div>
+            ) : isLive ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/20">
+                <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+                <span className="text-[11px] text-success font-semibold">Online</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/10 border border-destructive/20">
+                <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
+                <span className="text-[11px] text-destructive font-semibold">Offline</span>
+              </div>
+            )}
           </div>
         </header>
 

@@ -344,29 +344,39 @@ export function traceSmtpServer(
 }
 
 // === Transfer Messages (xfer) ===
-export interface XferRequest {
-  domain?: string;
-  campaign?: string;
-  tenant?: string;
-  routing_domain?: string;
-  target_node: string;
+export interface XferV1Request {
+  /** Required. HTTP url prefix of the target node, e.g. "http://127.0.0.1:8000" */
+  target: string;
+  /** Required. Reason to log in the delivery log. */
+  reason: string;
+  /** Optional. The campaign name to match. If omitted, any campaign will match. */
+  campaign?: string | null;
+  /** Optional. The domain name to match. If omitted, any domain will match. */
+  domain?: string | null;
+  /** Optional. If present, takes precedence over campaign, tenant, and domain. */
   queue_names?: string[];
+  /** Optional. The routing_domain name to match. If omitted, any routing_domain will match. */
+  routing_domain?: string | null;
+  /** Optional. The tenant to match. If omitted, any tenant will match. */
+  tenant?: string | null;
 }
-export interface XferResponse {
-  id: string;
-  total_transferred: number;
-}
-export const xferMessages = (data: XferRequest) =>
-  request<XferResponse>("/api/admin/xfer/v1", {
+export type XferV1Response = Record<string, never>;
+export const xferMessages = (data: XferV1Request) =>
+  request<XferV1Response>("/api/admin/xfer/v1", {
     method: "POST",
     body: JSON.stringify(data),
   });
 
-export interface XferCancelRequest {
-  id: string;
+// === Cancel Transfer (xfer cancel) ===
+export interface XferCancelV1Request {
+  /** Required. The name of the xfer scheduled queue. */
+  queue_name: string;
+  /** Required. Reason to log in the delivery log. */
+  reason: string;
 }
-export const cancelXfer = (data: XferCancelRequest) =>
-  request<unknown>("/api/admin/xfer/cancel/v1", {
+export type XferCancelV1Response = Record<string, never>;
+export const cancelXfer = (data: XferCancelV1Request) =>
+  request<XferCancelV1Response>("/api/admin/xfer/cancel/v1", {
     method: "POST",
     body: JSON.stringify(data),
   });

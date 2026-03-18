@@ -14,6 +14,8 @@ import { TraceSmtpClientPage } from "@/pages/trace-smtp-client";
 import { TraceSmtpServerPage } from "@/pages/trace-smtp-server";
 import { QueueSummaryPage } from "@/pages/queue-summary";
 import { LiveTopPage } from "@/pages/live-top";
+import { XferPage } from "@/pages/xfer";
+import { LivenessPage } from "@/pages/liveness";
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
         <Route path="/rebind" element={<RebindPage />} />
         <Route path="/trace-smtp-client" element={<TraceSmtpClientPage />} />
         <Route path="/trace-smtp-server" element={<TraceSmtpServerPage />} />
+        <Route path="/xfer" element={<XferPage />} />
+        <Route path="/liveness" element={<LivenessPage />} />
       </Route>
     </Routes>
   );
