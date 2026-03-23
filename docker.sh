@@ -12,7 +12,7 @@ echo "Building image..."
 docker build -t $IMAGE_NAME .
 
 echo "Running container..."
-docker run -d --name $CONTAINER_NAME -p $PORT:$PORT $IMAGE_NAME
+docker run -d --network host --name $CONTAINER_NAME $IMAGE_NAME
 
 echo ""
 echo "App is running at http://localhost:$PORT"
