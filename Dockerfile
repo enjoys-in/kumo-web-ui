@@ -13,8 +13,9 @@ FROM oven/bun:1-slim AS production
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
+
+RUN bun i -g serve
 
 EXPOSE 4173
 
-CMD ["bun", "run", "preview", "--host", "0.0.0.0"]
+CMD ["serve", "dist", "-l", "4173"]
