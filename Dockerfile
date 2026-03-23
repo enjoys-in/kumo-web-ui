@@ -13,9 +13,10 @@ FROM oven/bun:1-slim AS production
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
+COPY entrypoint.sh ./
 
-RUN bun i -g serve
+RUN bun i -g serve && chmod +x entrypoint.sh
 
 EXPOSE 4173
 
-CMD ["serve", "dist", "-l", "4173"]
+CMD ["./entrypoint.sh"]

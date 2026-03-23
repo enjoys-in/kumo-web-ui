@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
-const URL = 'http://localhost:8000'
+const URL = process.env.API_URL || 'http://localhost:8000'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {

@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_KUMO_API_URL || "";
+const API_BASE = (window as any).__ENV?.API_URL || import.meta.env.VITE_KUMO_API_URL || "";
 
 function getAuthHeaders(): HeadersInit {
   const username = localStorage.getItem("kumo_username") || "";
